@@ -80,9 +80,12 @@ const shoppingListSlice = createSlice({
         if (note !== undefined) item.note = note;
       }
     },
+    resetList() {
+      return initialState;
+    }
   },
 });
 
-export const { addItem, removeItem, toggleComplete, editItem } =
+export const { addItem, removeItem, toggleComplete, editItem , resetList } =
   shoppingListSlice.actions;
 export default shoppingListSlice.reducer;
