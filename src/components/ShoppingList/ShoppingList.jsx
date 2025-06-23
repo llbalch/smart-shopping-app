@@ -1,9 +1,9 @@
 import Toolbar from "../Toolbar/Toolbar";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, resetList } from "../../redux/shoppingListSlice";
-import ItemList from "../ItemList/ItemList.jsx"; // I will make an ItemList component to display items
-import { showFavorites } from "../../redux/uiSlice.js";
+import { addItem, resetList, toggleComplete } from "../../redux/shoppingListSlice";
+import ItemList from "../ItemList/ItemList.jsx";
+import { openEditItemModal, setActiveView } from "../../redux/uiSlice.js";
 // import { showFavorites, handleSearch, handleToggleCompleted, ... }
 
 export default function ShoppingList() {
@@ -51,14 +51,14 @@ export default function ShoppingList() {
       <h2>🍎 Smart Shopping App</h2>
       <div>
         <Toolbar
-          onFavoritesClick={handleFavoritesClick}
+          onFavoritesClick={() => dispatch(setActiveView('favorites'))}
           onAddItem={handleAddItem}
           onToggleCompleted={handleToggleCompleted}
           completedVisible={completedVisible}
           onSearch={handleSearch}
         />
 
-        <ItemList items={filteredItems} completedVisible={completedVisible} />
+        <ItemList items={filteredItems} onEditItem={itemId => dispatch(openEditItemModal(itemId))} onToggleComplete={itemId => dispatch(toggleComplete(itemId))} completedVisible={completedVisible} />
         <button onClick={() => dispatch(resetList())}> Reset List </button>
       </div>
     </>
