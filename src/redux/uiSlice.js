@@ -20,6 +20,9 @@ const uiSlice = createSlice({
     // navigation to shoppingList or favorites
     setActiveView(state, action) {
       state.activeView = action.payload;
+      if (action.payload !== "editItem") {
+        state.editingItemId = null;
+      }
     },
 
     // edit item details modal
