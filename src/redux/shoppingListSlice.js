@@ -8,6 +8,7 @@ const initialState = {
       quantity: 1,
       completed: false,
       note: "",
+      favorite: true,
     },
     {
       id: "2",
@@ -16,6 +17,7 @@ const initialState = {
       quantity: 2,
       completed: false,
       note: "",
+      favorite: false,
     },
     {
       id: "3",
@@ -24,6 +26,7 @@ const initialState = {
       quantity: 1,
       completed: false,
       note: "",
+      favorite: false,
     },
     {
       id: "4",
@@ -32,6 +35,7 @@ const initialState = {
       quantity: 1,
       completed: true,
       note: "",
+      favorite: false,
     },
   ],
 };
@@ -45,7 +49,7 @@ const shoppingListSlice = createSlice({
         /* add item logic*/
         state.items.push(action.payload);
       },
-      prepare({ name, category = '', quantity = 1, note = '' }) {
+      prepare({ name, category = "", quantity = 1, note = "" }) {
         return {
           payload: {
             id: nanoid(),
@@ -60,11 +64,11 @@ const shoppingListSlice = createSlice({
     },
     removeItem: (state, action) => {
       /* remove item logic*/
-      state.items = state.items.filter(item => item.id !== action.payload);
+      state.items = state.items.filter((item) => item.id !== action.payload);
     },
     toggleComplete: (state, action) => {
       /* logic to toggle completed*/
-      const item = state.items.find(item => item.id === action.payload);
+      const item = state.items.find((item) => item.id === action.payload);
       if (item) {
         item.completed = !item.completed;
       }
@@ -72,7 +76,7 @@ const shoppingListSlice = createSlice({
     editItem: (state, action) => {
       /* edit item logic*/
       const { id, name, category, quantity, note } = action.payload;
-      const item = state.items.find(item => item.id === id);
+      const item = state.items.find((item) => item.id === id);
       if (item) {
         if (name !== undefined) item.name = name;
         if (category !== undefined) item.category = category;
@@ -80,12 +84,18 @@ const shoppingListSlice = createSlice({
         if (note !== undefined) item.note = note;
       }
     },
+    toggleFavorite: (state, action) => {
+      const item = state.items.find((item) => item.id === action.payload);
+      if (item) {
+        item.favorite = !item.favorite;
+      }
+    },
     resetList() {
       return initialState;
-    }
+    },
   },
 });
 
-export const { addItem, removeItem, toggleComplete, editItem , resetList } =
+export const { addItem, removeItem, toggleComplete, editItem, toggleFavorite, resetList } =
   shoppingListSlice.actions;
 export default shoppingListSlice.reducer;

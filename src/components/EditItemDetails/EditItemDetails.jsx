@@ -3,10 +3,15 @@
 // and save and back buttons that will return user to the main screen*//
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { editItem, removeItem } from "../../redux/shoppingListSlice";
+import {
+  editItem,
+  removeItem,
+  toggleFavorite,
+} from "../../redux/shoppingListSlice";
 import { closeEditItemModal } from "../../redux/uiSlice";
 import heartIcon from "../../assets/images/heart.png";
 import trashIcon from "../../assets/images/trash.png";
+import favHeartIcon from "../../assets/images/favoritedHeart.png"
 
 export default function EditItemDetails({
   itemId,
@@ -50,6 +55,10 @@ export default function EditItemDetails({
     else dispatch(closeEditItemModal());
   };
 
+  const handleToggleFavorite = () => {
+    dispatch(toggleFavorite(itemId));
+  };
+
   return (
     <div className="modal edit-item-details">
       <div
@@ -60,7 +69,24 @@ export default function EditItemDetails({
           justifyContent: "space-between",
         }}
       >
-        <img src={heartIcon} alt="favorite" style={{ width: 28, height: 28 }} />
+        <button
+          onClick={handleToggleFavorite}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            marginRight: "8px",
+          }}
+          aria-label={item.favorite ? "Unmark as favorite" : "Mark as favorite"}
+        >
+          <img
+            src={item.favorite ? favHeartIcon : heartIcon}
+            alt={item.favorite ? "Favorited" : "Not Favorited"}
+            style={{ width: 28, height: 28 }}
+          />
+        </button>
+
         <span style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
           {item.name}
         </span>
