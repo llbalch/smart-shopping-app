@@ -75,13 +75,14 @@ const shoppingListSlice = createSlice({
     },
     editItem: (state, action) => {
       /* edit item logic*/
-      const { id, name, category, quantity, note } = action.payload;
+      const { id, ...updates } = action.payload;
       const item = state.items.find((item) => item.id === id);
       if (item) {
-        if (name !== undefined) item.name = name;
-        if (category !== undefined) item.category = category;
-        if (quantity !== undefined) item.quantity = quantity;
-        if (note !== undefined) item.note = note;
+        Object.entries(updates).forEach(([key, value]) => {
+          if (value !== undefined) {
+            item[key] = value;
+          }
+        });
       }
     },
     toggleFavorite: (state, action) => {
@@ -96,6 +97,12 @@ const shoppingListSlice = createSlice({
   },
 });
 
-export const { addItem, removeItem, toggleComplete, editItem, toggleFavorite, resetList } =
-  shoppingListSlice.actions;
+export const {
+  addItem,
+  removeItem,
+  toggleComplete,
+  editItem,
+  toggleFavorite,
+  resetList,
+} = shoppingListSlice.actions;
 export default shoppingListSlice.reducer;

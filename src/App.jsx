@@ -12,6 +12,7 @@ import EditItemDetails from "../src/components/EditItemDetails/EditItemDetails";
 import EditCategoryDetails from "../src/components/EditCategoryDetails/EditCategoryDetails";
 import FavoritedItems from "../src/components/FavoritedItems/FavoritedItems";
 import Modal from "../src/components/Modal/Modal";
+import { editItem } from "./redux/shoppingListSlice";
 
 function App() {
   const {
@@ -21,6 +22,22 @@ function App() {
     editingItemId,
   } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
+
+  // find the actual item object in Redux store to get its category prop
+  const editingItem = useSelector((state) =>
+    state.shoppingList.items.find((item) => item.id === editingItemId)
+  );
+  const itemCategory = editingItem?.category || "";
+
+  const handleCategorySave = (newCategory) => {
+    dispatch(editItem({
+      id: editingItemId,
+      category: newCategory,
+    }));
+    dispatch(closeEditCategoryModal());
+    dispatch(openEditItemModal(editingItemId));
+  };
+
   return (
     <div>
       {activeView === "shoppingList" && <ShoppingList />}
@@ -42,12 +59,11 @@ function App() {
       {isEditCategoryModalOpen && (
         <Modal onClose={() => dispatch(closeEditCategoryModal())}>
           <EditCategoryDetails
-            onSave={() => {
+            currentCategory={itemCategory}
+            onSave={handleCategorySave}
+            onBack={() => {
               dispatch(closeEditCategoryModal());
               dispatch(openEditItemModal(editingItemId));
-            }}
-            onBack={() => {dispatch(closeEditCategoryModal())
-              dispatch(openEditItemModal(editingItemId))
             }}
           />
         </Modal>

@@ -8,7 +8,7 @@ import {
   removeItem,
   toggleFavorite,
 } from "../../redux/shoppingListSlice";
-import { closeEditItemModal } from "../../redux/uiSlice";
+import { closeEditItemModal, openEditCategoryModal } from "../../redux/uiSlice";
 import heartIcon from "../../assets/images/heart.png";
 import trashIcon from "../../assets/images/trash.png";
 import favHeartIcon from "../../assets/images/favoritedHeart.png"
@@ -30,11 +30,9 @@ export default function EditItemDetails({
   const [itemCategory, setItemCategory] = React.useState(item?.category || "");
 
   // If category is passed as a prop from (EditCategory modal), update local state
-  React.useEffect(() => {
-    if (category) setItemCategory(category);
-  }, [category]);
-
-  if (!item) return null;
+ React.useEffect(() => {
+  setItemCategory(item?.category || "");
+}, [item?.category]);
 
   const handleSave = () => {
     dispatch(
@@ -116,7 +114,7 @@ export default function EditItemDetails({
           marginBottom: "1rem",
         }}
       >
-        <button onClick={onEditItemCategory} style={{ padding: "0.5rem 1rem" }}>
+        <button onClick={()=> dispatch (openEditCategoryModal())} style={{ padding: "0.5rem 1rem" }}>
           {item.category || "Select Category"}
         </button>
 
