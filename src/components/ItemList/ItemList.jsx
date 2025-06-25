@@ -2,19 +2,21 @@
 // strikethrough on click for marking complete *//
 import React from "react";
 import editIcon from "../../assets/images/pencil.png";
+import { DEFAULT_CATEGORIES } from "../../constants/categories";
+import { CATEGORY_COLORS } from "../../constants/categoryColors";
 
-const CATEGORY_COLORS = {
-  Produce: "#b4eeb4",
-  Meat: "#ffe5b4",
-  Dairy: "#e0e0ff",
-  "Frozen Foods": "#c0f0ff",
-  Snacks: "#ffe5b4",
-  Bakery: "#ffe5b4",
-  Beverages: "#ffe5b4",
-  "Household/Cleaning": "#ffe5b4",
-};
-
+// appending User-made custom categories to default categories
 function ItemList({ items, onEditItem, onToggleComplete }) {
+  const categoriesInUse = [...new Set(items.map((item) => item.category))];
+  const customCategories = categoriesInUse.filter(
+    (category) => !DEFAULT_CATEGORIES.includes(category)
+  );
+  const allCategories = [
+    ...DEFAULT_CATEGORIES.filter((category) =>
+      categoriesInUse.includes(category)
+    ),
+    ...customCategories,
+  ];
   // Group items by category
   const grouped = items.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
@@ -22,20 +24,9 @@ function ItemList({ items, onEditItem, onToggleComplete }) {
     return acc;
   }, {});
 
-  const categoryOrder = [
-    "Produce",
-    "Meat",
-    "Dairy",
-    "Frozen Foods",
-    "Snacks",
-    "Bakery",
-    "Beverages",
-    "Household/Cleaning",
-  ];
-
   return (
     <div>
-      {categoryOrder.map(
+      {allCategories.map(
         (category) =>
           grouped[category] && (
             <div key={category}>
