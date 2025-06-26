@@ -35,35 +35,26 @@ export default function EditCategoryDetails({
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="p-4">
       <h3>Edit Category</h3>
-      <ul style={{ listStyle: "none", padding: 0 }}>
+      <ul className="list-unstyled mb-3">
         {categories.map((category) => (
-          <li key={category} style={{ margin: "8px 0" }}>
+          <li key={category} className="mb-2">
             <button
               type="button"
               onClick={() => handleCategoryClick(category)}
-              style={{
-                width: "100%",
-                padding: "0.75rem",
-                background:
-                  selectedCategory === category ? "#b4eeb4" : "#f7f7f7",
-                border:
+              className={`w-100 d-flex align-items-center justify-content-between btn
+                ${
                   selectedCategory === category
-                    ? "2px solid #4caf50"
-                    : "1px solid #ccc",
-                borderRadius: 8,
-                textAlign: "left",
-                fontWeight: selectedCategory === category ? "bold" : "normal",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+                    ? "btn-success fw-bold border-success"
+                    : "btn-light border"
+                }
+                text-start`}
+              style={{ borderRadius: "8px" }}
             >
               {category}
               {selectedCategory === category && (
-                <span aria-label="selected" style={{ marginLeft: 8 }}>
+                <span aria-label="selected" className="ms-2">
                   ✔️
                 </span>
               )}
@@ -71,54 +62,31 @@ export default function EditCategoryDetails({
           </li>
         ))}
       </ul>
-      <div style={{ display: "flex", gap: 8, margin: "16px 0" }}>
+      <div className="d-flex gap-2 mb-4">
         <input
           type="text"
           placeholder="Add new category"
           value={newCategory}
           onChange={(e) => setNewCategory(e.target.value)}
-          style={{ flex: 2, padding: "0.5rem" }}
+          className="form-control"
         />
         <button
           onClick={handleAddCategory}
-          style={{
-            flex: 1,
-            background: "#e0e0e0",
-            border: "none",
-            borderRadius: 8,
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
+          className="btn btn-outline-secondary fw-bold"
         >
           Add
         </button>
       </div>
-      <div style={{ display: "flex", gap: "1rem", marginTop: 24 }}>
+      <div className="d-flex gap-3 mt-4">
         <button
           onClick={handleSave}
-          style={{
-            flex: 1,
-            background: "#b4eeb4",
-            border: "none",
-            borderRadius: 8,
-            padding: "0.75rem",
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
+          className="btn btn-success flex-fill fw-bold"
         >
           Save
         </button>
         <button
           onClick={onBack}
-          style={{
-            flex: 1,
-            background: "#fff",
-            border: "1px solid #ccc",
-            borderRadius: 8,
-            padding: "0.75rem",
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
+          className="btn btn-outline-secondary flex-fill fw-bold"
         >
           Back
         </button>
