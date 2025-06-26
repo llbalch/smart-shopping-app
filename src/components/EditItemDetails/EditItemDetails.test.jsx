@@ -37,14 +37,12 @@ test("shows item details and allows editing", () => {
 
   // modal shows correct initial data
   const category = screen.getByRole("button", { name: /produce/i });
-  const quantity = screen.getByDisplayValue("1");
-  const note = screen.getByPlaceholderText(/+ Add Note/i);
   expect(category).toHaveTextContent("Produce");
-  expect(quantity.value).toBe("1");
+  expect(screen.getByText("1")).toBeInTheDocument();
+  const note = screen.getByPlaceholderText(/\+ Add Note/i);
   expect(note.value).toBe("");
 
-  describe("simulate user action - changing quantity", () => {
-    const quantityDisplay = screen.getByText("1)");
+  test("simulate user action - changing quantity", () => {
     const plusButton = screen.getByText("+");
     const minusButton = screen.getByText("-");
 
@@ -61,36 +59,43 @@ test("shows item details and allows editing", () => {
     fireEvent.click(screen.getByText(/save/i));
 
     expect(store.dispatch).toHaveBeenCalledWith({
-        type: "shoppingList/editItem",
-        payload: {
-            id: 1,
-            note: "",
-            quantity: 3,
-            category: "Produce",
-        }
-    })
+      type: "shoppingList/editItem",
+      payload: {
+        id: 1,
+        note: "",
+        quantity: 3,
+        category: "Produce",
+      },
+    });
+
+    expect(onClose).toHaveBeenCalled();
   });
 
   // simulate user action - adding a note
-  const noteInput = screen.getByPlaceholderText(/+ Add Note/i);
-  fireEvent.change(noteInput, { target: { value: "For salad" } });
-  expect(noteInput.value).toBe("For salad");
-
-  // simulate user action - clicking category
-
-  // simulate user action - clicking save
-  fireEvent.click(screen.getByText(/save/i));
-
-  // assert Redux dispatch was called with correct payload
-  expect(store.dispatch).toHaveBeenCalledWith({
-    type: "shoppingList/editItem",
-    payload: {
-      id: 1,
-      quantity: 2,
-      note: "For salad",
-    },
+  test("simulate user action - adding a note", () => {
+    const noteInput = screen.getByPlaceholderText(/+ Add Note/i);
+    fireEvent.change(noteInput, { target: { value: "For salad" } });
+    expect(noteInput.value).toBe("For salad");
+    fireEvent.click(screen.getByText(/save/i));
+    expect(store.dispatch).toHaveBeenCalledWith({
+      type: "shoppingList/editItem",
+      payload: {
+        id: 1,
+        note: "For salad",
+        quantity: 3,
+        category: "Produce",
+      },
+    });
+    expect(onClose).toHaveBeenCalledWith();
   });
 
-  //assert modal closes
-  expect(onClose).toHaveBeenCalled();
+  // simulate user action - clicking category
+  test("simulate user action- clicking to change category", () => {
+    const categoryButton = screen.getByRole("button", { name: /produce/i });
+    fireEvent.click(categoryButton);
+    expect(store.dispatch).toHaveBeenCalledWith({
+      type: "ui/openEditCategoryModal",
+    });
+    expect(screen.getByText(/edit category/i)).toBeInTheDocument();
+  });
 });
