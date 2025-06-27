@@ -1,3 +1,4 @@
+import React from "react"
 import { DEFAULT_CATEGORIES } from "../../constants/categories";
 import { useState } from "react";
 
@@ -81,6 +82,7 @@ export default function EditCategoryDetails({
         <button
           onClick={handleSave}
           className="btn btn-success flex-fill fw-bold"
+          aria-label="Save Category"
         >
           Save
         </button>
