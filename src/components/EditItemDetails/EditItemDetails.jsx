@@ -9,9 +9,9 @@ import {
   toggleFavorite,
 } from "../../redux/shoppingListSlice";
 import { closeEditItemModal, openEditCategoryModal } from "../../redux/uiSlice";
-import heartIcon from "../../assets/images/heart.png";
 import trashIcon from "../../assets/images/trash.png";
-import favHeartIcon from "../../assets/images/favoritedHeart.png"
+import blackHeart from "../../assets/images/blackHeart.png"
+import redHeart from "../../assets/images/redHeart.png"
 
 export default function EditItemDetails({
   itemId,
@@ -73,13 +73,13 @@ export default function EditItemDetails({
             background: "none",
             border: "none",
             cursor: "pointer",
-            padding: 0,
-            marginRight: "8px",
+            padding: "12px",
+            marginRight: "5px",
           }}
           aria-label={item.favorite ? "Unmark as favorite" : "Mark as favorite"}
         >
           <img
-            src={item.favorite ? favHeartIcon : heartIcon}
+            src={item.favorite ? redHeart : blackHeart}
             alt={item.favorite ? "Favorited" : "Not Favorited"}
             style={{ width: 28, height: 28 }}
           />
@@ -92,7 +92,7 @@ export default function EditItemDetails({
           onClick={handleDelete}
           style={{ background: "none", border: "none" }}
         >
-          <img src={trashIcon} alt="delete" style={{ width: 28, height: 28 }} />
+          <img src={trashIcon} alt="delete" style={{ width: 24, height: 24 }} />
         </button>
       </div>
       <div style={{ margin: "1rem 0" }}>
