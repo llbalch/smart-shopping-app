@@ -1,3 +1,4 @@
+import { STATEMENT_TYPES } from "@babel/types";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -11,26 +12,18 @@ const favoritesSlice = createSlice({
   name: "favoritesList",
   initialState,
   reducers: {
-    addFavoriteToShoppingList: (state, action) => {
-      // action.payload = item object
-      const exists = state.items.some(
-        (item) => item.name.toLowerCase() === action.payload.name.toLowerCase()
-      );
-      if (!exists) {
-        state.items.push({
-          ...action.payload,
-          completed: false,
-          quantity: 1 /* will need to modify */,
-          note: "",
-        });
-      }
-    },
     removeFavorite: (state, action) => {
       // action.payload = { id }
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
     editFavorite: (state, action) => {
       /* edit item logic*/
+      const index = state.items.findIndex(
+        (item) => item.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.items[index] = { ...state.items[index], ...action.payload };
+      }
     },
     setSuggestions: (state, action) => {
       //action.payload = array of suggested items
@@ -53,10 +46,15 @@ const favoritesSlice = createSlice({
 });
 
 export const {
-  addFavoriteToShoppingList,
   removeFavorite,
   editFavorite,
   setSuggestions,
   addFavoriteByName,
 } = favoritesSlice.actions;
 export default favoritesSlice.reducer;
+
+// ensure that selectors always return arrays - no .map errors in components
+export const selectFavoriteItems = (state) => state.favoritesList.items || [];
+
+export const selectFavoriteSuggestions = (state) =>
+  state.favoritesList.suggestions || [];

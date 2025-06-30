@@ -5,8 +5,7 @@ import FilterIconSearchToggle from "../FilterIconSearchToggle/FilterIconSearchTo
 import favoriteIcon from "../../assets/images/heart.png";
 import openEyeIcon from "../../assets/images/eye.png";
 import closedEyeIcon from "../../assets/images/closedEye.png";
-import filterIcon from "../../assets/images/funnel.png";
-import pencilIcon from "../../assets/images/pencil.png";
+
 
 export default function Toolbar({
   onFavoritesClick,
@@ -20,7 +19,7 @@ export default function Toolbar({
       className="toolbar"
       style={{ display: "flex", alignItems: "center", gap: "1rem" }}
     >
-      <button onClick={onFavoritesClick}>
+      <button onClick={onFavoritesClick} aria-label="Open favorites">
         {
           <img
             src={favoriteIcon}
