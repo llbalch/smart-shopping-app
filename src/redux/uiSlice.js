@@ -6,6 +6,7 @@ const initialState = {
   // modal management
   isEditItemModalOpen: false,
   isEditCategoryModalOpen: false,
+  isFavoritesModalOpen: false,
 
   // track item by id that is currently under edit
   editingItemId: null,
@@ -25,6 +26,14 @@ const uiSlice = createSlice({
       }
     },
 
+    openFavoritesModal(state) {
+      state.isFavoritesModalOpen = true;
+    }, 
+
+    closeFavoritesModal(state) {
+      state.isFavoritesModalOpen = false;
+    },
+
     // edit item details modal
     openEditItemModal(state, action) {
       state.isEditItemModalOpen = true;
@@ -38,6 +47,7 @@ const uiSlice = createSlice({
 
     // edit category modal
     openEditCategoryModal(state) {
+      state.isEditItemModalOpen = false;
       state.isEditCategoryModalOpen = true;
     },
     closeEditCategoryModal(state) {
@@ -63,5 +73,7 @@ export const {
   closeEditCategoryModal,
   toggleCompletedVisible,
   setCompletedVisible,
+  openFavoritesModal,
+  closeFavoritesModal,
 } = uiSlice.actions;
 export default uiSlice.reducer;

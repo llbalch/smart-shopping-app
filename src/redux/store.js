@@ -8,7 +8,7 @@ import uiReducer from './uiSlice';
 export default configureStore({
     reducer: {
         shoppingList: shoppingListReducer,
-        favorites: favoritesReducer,
+        favoritesList: favoritesReducer,
         ui: uiReducer,
     }
 })
