@@ -4,9 +4,23 @@ import React from "react";
 import editIcon from "../../assets/images/pencil.png";
 import { DEFAULT_CATEGORIES } from "../../constants/categories";
 import { CATEGORY_COLORS } from "../../constants/categoryColors";
-
+import "../Modal/Modal.css";
+import { suggestCategory } from "../../utilities/suggestCategory";
+import trashIcon from "../../assets/images/trash.png";
 // appending User-made custom categories to default categories
-function ItemList({ items, onEditItem, onToggleComplete }) {
+export function ItemList({
+  items,
+  onEditItem,
+  onToggleComplete,
+  onAddToList,
+  onDeleteItem,
+  showToggle = true,
+  showPlus = false,
+  showQuantity = true,
+  showNote = true,
+  showEdit = true,
+  showDelete = false,
+}) {
   const categoriesInUse = [...new Set(items.map((item) => item.category))];
   const customCategories = categoriesInUse.filter(
     (category) => !DEFAULT_CATEGORIES.includes(category)
@@ -19,86 +33,132 @@ function ItemList({ items, onEditItem, onToggleComplete }) {
   ];
   // Group items by category
   const grouped = items.reduce((acc, item) => {
-    if (!acc[item.category]) acc[item.category] = [];
-    acc[item.category].push(item);
+    const category =
+      item.category || suggestCategory(item.name) || "Uncategorized";
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(item);
     return acc;
   }, {});
 
   return (
     <div>
-      {allCategories.map(
-        (category) =>
-          grouped[category] && (
-            <div key={category}>
-              {/* Category Header */}
-              <div
+      {Object.entries(grouped).map(([category, items]) => (
+        <div key={category}>
+          {/* Category Header */}
+          <div
+            className="category-banner"
+            style={{
+              background: CATEGORY_COLORS[category] || "#eee",
+            }}
+          >
+            {category}
+          </div>
+          {/* Items in Category */}
+          {grouped[category].map((item) => (
+            <div
+              key={item.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "0.5rem 0",
+                borderBottom: "1px solid #f0f0f0",
+              }}
+            >
+              {/* Plus Button for Favorites */}
+              {showPlus && (
+                <button
+                  onClick={() => onAddToList(item)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    marginRight: "0.5rem",
+                    color: "#198754",
+                    fontSize: "1.2em",
+                    fontWeight: "bold",
+                  }}
+                  aria-label={`Add ${item.name} to shopping list`}
+                >
+                  +
+                </button>
+              )}
+
+              {/* Item Name and Quantity */}
+              <span
+                onClick={
+                  showToggle && onToggleComplete
+                    ? () => onToggleComplete(item.id)
+                    : undefined
+                }
                 style={{
-                  background: CATEGORY_COLORS[category] || "#eee",
-                  padding: "0.5rem",
-                  fontWeight: "bold",
-                  borderRadius: "6px",
-                  margin: "1rem 0 0.5rem 0",
+                  flex: 1,
+                  cursor: showToggle ? "pointer" : "default",
+                  textDecoration:
+                    showToggle && item.completed ? "line-through" : "none",
+                  textDecorationColor:
+                    showToggle && item.completed ? "salmon" : undefined,
+                  color: showToggle && item.completed ? "#aaa" : "#222",
                 }}
               >
-                {category}
-              </div>
-              {/* Items in Category */}
-              {grouped[category].map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "0.5rem 0",
-                    borderBottom: "1px solid #f0f0f0",
-                  }}
-                >
-                  {/* Item Name and Quantity */}
+                {item.name}
+                {showQuantity && item.quantity > 1 ? ` (${item.quantity})` : ""}
+                {showNote && item.note && (
                   <span
-                    onClick={() => onToggleComplete(item.id)}
                     style={{
-                      flex: 1,
-                      cursor: "pointer",
-                      textDecoration: item.completed ? "line-through" : "none",
-                      color: item.completed ? "#aaa" : "#222",
+                      display: "block",
+                      fontSize: "0.7em",
+                      color: "#666",
+                      marginTop: "2px",
+                      marginLeft: "15px",
                     }}
+                    className="item-note"
                   >
-                    {item.name}
-                    {item.quantity > 1 ? ` (${item.quantity})` : ""}
-                    {item.note && (
-                      <span
-                        style={{
-                          display: "block",
-                          fontSize: "0.7em",
-                          color: "#666",
-                          marginTop: "2px",
-                          marginLeft: "15px",
-                        }}
-                        className="item-note"
-                      >
-                        {" "}
-                        {item.note}
-                      </span>
-                    )}
+                    {" "}
+                    {item.note}
                   </span>
-                  {/* Edit Icon */}
-                  <button
-                    onClick={() => onEditItem(item.id)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      marginLeft: "0.5rem",
-                    }}
-                    aria-label={`Edit ${item.name}`}
-                  >
-                    <img src={editIcon} alt="Edit" width={20} height={20} />
-                  </button>
-                </div>
-              ))}
+                )}
+              </span>
+              {/* Edit Icon */}
+              {showEdit && (
+                <button
+                  onClick={() => onEditItem(item.id)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    marginLeft: "0.5rem",
+                  }}
+                  aria-label={`Edit ${item.name}`}
+                >
+                  <img src={editIcon} alt="Edit" width={20} height={20} />
+                </button>
+              )}
+
+              {/* Delete Icon */}
+              {showDelete && (
+                <button
+                  onClick={() => onDeleteItem(item.id)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "#c00",
+                    marginLeft: "8px",
+                  }}
+                  aria-label="Delete favorite"
+                  title="Delete"
+                >
+                  <img
+                    src={trashIcon}
+                    alt="delete"
+                    style={{ width: 22, height: 22 }}
+                  />
+                </button>
+              )}
             </div>
-          )
-      )}
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
