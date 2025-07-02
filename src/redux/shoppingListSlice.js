@@ -8,7 +8,7 @@ const initialState = {
       quantity: 1,
       completed: false,
       note: "",
-      favorite: true,
+      favorite: false,
     },
     {
       id: "2",
@@ -49,7 +49,7 @@ const shoppingListSlice = createSlice({
         /* add item logic*/
         state.items.push(action.payload);
       },
-      prepare({ name, category = "", quantity = 1, note = "" }) {
+      prepare({ name, category = "", quantity = 1, note = "", favorite }) {
         return {
           payload: {
             id: nanoid(),
@@ -58,11 +58,12 @@ const shoppingListSlice = createSlice({
             quantity,
             completed: false,
             note,
+            favorite: false,
           },
         };
       },
     },
-    removeItem: (state, action) => {
+    removeFavorite: (state, action) => {
       /* remove item logic*/
       state.items = state.items.filter((item) => item.id !== action.payload);
     },

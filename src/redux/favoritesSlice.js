@@ -2,7 +2,33 @@ import { STATEMENT_TYPES } from "@babel/types";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  items: [],
+  items: [{
+      id: "5",
+      name: "Laundry Detergent",
+      category: "Household/Cleaning",
+      quantity: 1,
+      completed: false,
+      note: "",
+      favorite: true,
+    },
+    {
+      id: "6",
+      name: "Beans",
+      category: "Pantry",
+      quantity: 1,
+      completed: false,
+      note: "",
+      favorite: true,
+    },
+    {
+      id: "7",
+      name: "Chicken",
+      category: "Meat",
+      quantity: 1,
+      completed: false,
+      note: "",
+      favorite: true,
+    },],
   suggestions: [
     /* add logic to suggest items based on previous purchases*/
   ],
