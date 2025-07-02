@@ -7,18 +7,22 @@ import {
   closeEditItemModal,
   openEditCategoryModal,
   closeEditCategoryModal,
+  openFavoritesModal,
+  closeFavoritesModal,
 } from "./redux/uiSlice";
 import EditItemDetails from "../src/components/EditItemDetails/EditItemDetails";
 import EditCategoryDetails from "../src/components/EditCategoryDetails/EditCategoryDetails";
 import FavoritedItems from "../src/components/FavoritedItems/FavoritedItems";
 import Modal from "../src/components/Modal/Modal";
 import { editItem } from "./redux/shoppingListSlice";
+import { selectFavoriteItems } from "./redux/favoritesSlice";
 
 function App() {
   const {
     activeView,
     isEditItemModalOpen,
     isEditCategoryModalOpen,
+    isFavoritesModalOpen,
     editingItemId,
   } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
@@ -30,22 +34,54 @@ function App() {
   const itemCategory = editingItem?.category || "";
 
   const handleCategorySave = (newCategory) => {
-    dispatch(editItem({
-      id: editingItemId,
-      category: newCategory,
-    }));
+    dispatch(
+      editItem({
+        id: editingItemId,
+        category: newCategory,
+      })
+    );
     dispatch(closeEditCategoryModal());
     dispatch(openEditItemModal(editingItemId));
   };
 
-  return (
-    <div>
-      {activeView === "shoppingList" && <ShoppingList />}
+  const handleFavoritesClick = () => {
+    dispatch(openFavoritesModal());
+  };
 
-      {activeView === "favorites" && (
-        <FavoritedItems
-          onBack={() => dispatch(setActiveView("shoppingList"))}
-        />
+  const handleEditItem = () => {
+    dispatch(closeEditItemModal());
+    dispatch(openEditItemModal(editingItemId));
+  };
+
+  const handleAddFavorite = () => {
+    const trimmed = newItemName.trim();
+    if (!trimmed) return;
+    const category = suggestCategory(trimmed);
+
+    onAddItem({
+      id: Date.now(),
+      name: trimmed,
+      category,
+      quantity: 1,
+      note: "",
+      favorite: false,
+    });
+    setNewItemName("");
+    setIsAdding(false);
+  };
+
+  const favoriteItems = useSelector(selectFavoriteItems);
+
+  return (
+    <>
+      {isFavoritesModalOpen && (
+        <Modal onClose={() => dispatch(closeFavoritesModal())}>
+       <FavoritedItems
+            onEditItem={handleEditItem}
+            onAddFavorite={handleAddFavorite}
+            onBack={() => dispatch(closeFavoritesModal())}
+          />
+        </Modal>
       )}
       {isEditItemModalOpen && (
         <Modal onClose={() => dispatch(closeEditItemModal())}>
@@ -68,7 +104,15 @@ function App() {
           />
         </Modal>
       )}
-    </div>
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "100vh", width: "100vw" }}
+      >
+        {activeView === "shoppingList" && (
+          <ShoppingList onFavoritesClick={handleFavoritesClick} />
+        )}
+      </div>
+    </>
   );
 }
 
