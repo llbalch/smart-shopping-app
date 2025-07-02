@@ -63,7 +63,7 @@ const shoppingListSlice = createSlice({
         };
       },
     },
-    removeFavorite: (state, action) => {
+    removeItem: (state, action) => {
       /* remove item logic*/
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
