@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { suggestCategory } from "../../utilities/suggestCategory"
 
 
 function AddItemBar({ onAddItem }) {

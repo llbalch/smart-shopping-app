@@ -9,20 +9,18 @@ import {
   toggleFavorite,
 } from "../../redux/shoppingListSlice";
 import { closeEditItemModal, openEditCategoryModal } from "../../redux/uiSlice";
+import { addFavoriteByName, removeFavorite } from "../../redux/favoritesSlice";
 import trashIcon from "../../assets/images/trash.png";
-import blackHeart from "../../assets/images/blackHeart.png"
-import redHeart from "../../assets/images/redHeart.png"
+import blackHeart from "../../assets/images/blackHeart.png";
+import redHeart from "../../assets/images/redHeart.png";
 
-export default function EditItemDetails({
-  itemId,
-  onClose,
-  onEditItemCategory,
-  category,
-}) {
+export default function EditItemDetails({ itemId, onClose }) {
   const dispatch = useDispatch();
   const item = useSelector((state) =>
     state.shoppingList.items.find((i) => i.id === itemId)
   );
+  console.log("EditItemDetails item:", item);
+  const items = useSelector((state) => state.shoppingList.items);
 
   // Local state for editable fields (notes/quantity/category)
   const [note, setNote] = React.useState(item?.note || "");
@@ -30,9 +28,9 @@ export default function EditItemDetails({
   const [itemCategory, setItemCategory] = React.useState(item?.category || "");
 
   // If category is passed as a prop from (EditCategory modal), update local state
- React.useEffect(() => {
-  setItemCategory(item?.category || "");
-}, [item?.category]);
+  React.useEffect(() => {
+    setItemCategory(item?.category || "");
+  }, [item?.category]);
 
   const handleSave = () => {
     dispatch(
@@ -53,49 +51,63 @@ export default function EditItemDetails({
     else dispatch(closeEditItemModal());
   };
 
-  const handleToggleFavorite = () => {
+  const handleToggleFavorite = (itemId) => {
     dispatch(toggleFavorite(itemId));
+    const item = items.find((item) => item.id === itemId);
+    if (item && !item.favorite) {
+      dispatch(addFavoriteByName(item.name));
+    } else {
+      dispatch(removeFavorite(itemId));
+    }
   };
 
   return (
-    <div className="modal edit-item-details">
-      <div
-        className="modal-header"
+    <>
+    <div className="modal-header"
         style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-        }}
-      >
-        <button
-          onClick={handleToggleFavorite}
-          style={{
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: "12px",
-            marginRight: "5px",
-          }}
-          aria-label={item.favorite ? "Unmark as favorite" : "Mark as favorite"}
-        >
-          <img
-            src={item.favorite ? redHeart : blackHeart}
-            alt={item.favorite ? "Favorited" : "Not Favorited"}
-            style={{ width: 28, height: 28 }}
-          />
-        </button>
+          gap: "1rem",
+        }}>
 
-        <span style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
+      <button
+        onClick={() => handleToggleFavorite(itemId)}
+        style={{
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: "12px",
+          marginRight: "5px",
+        }}
+        aria-label={item.favorite ? "Unmark as favorite" : "Mark as favorite"}
+      >
+        {" "}
+        <img
+          src={item.favorite ? redHeart : blackHeart}
+          alt={item.favorite ? "Favorited" : "Not Favorited"}
+          style={{ width: 28, height: 28 }}
+        />
+      </button>
+         <span
+          style={{
+            fontWeight: "bold",
+            fontSize: "1.2rem",
+            flex: 1,
+            textAlign: "center",
+          }}
+        >
           {item.name}
         </span>
         <button
           onClick={handleDelete}
           style={{ background: "none", border: "none" }}
+          aria-label="Delete"
         >
           <img src={trashIcon} alt="delete" style={{ width: 24, height: 24 }} />
         </button>
-      </div>
-      <div style={{ margin: "1rem 0" }}>
+    </div>
+          <div style={{ margin: "2rem 1rem" }}>
         <input
           type="text"
           placeholder="+ Add Note"
@@ -104,8 +116,7 @@ export default function EditItemDetails({
           style={{ width: "100%", padding: "0.5rem" }}
         />
       </div>
-
-      {/* Category and Quantity*/}
+       {/* Category and Quantity*/}
       <div
         style={{
           display: "flex",
@@ -114,7 +125,10 @@ export default function EditItemDetails({
           marginBottom: "1rem",
         }}
       >
-        <button onClick={()=> dispatch (openEditCategoryModal())} style={{ padding: "0.5rem 1rem" }}>
+        <button
+          onClick={() => dispatch(openEditCategoryModal())}
+          style={{ padding: "0.5rem 1rem" }}
+        >
           {item.category || "Select Category"}
         </button>
 
@@ -140,6 +154,9 @@ export default function EditItemDetails({
           Back{" "}
         </button>
       </div>
-    </div>
+
+
+    
+    </>
   );
 }
