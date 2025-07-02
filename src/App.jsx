@@ -1,5 +1,4 @@
 import { useSelector, useDispatch } from "react-redux";
-import styles from "./App.module.css";
 import ShoppingList from "./components/ShoppingList/ShoppingList";
 import {
   setActiveView,
@@ -106,7 +105,7 @@ function App() {
       )}
       <div
         className="d-flex justify-content-center align-items-center"
-        style={{ minHeight: "100vh", width: "100vw" }}
+        style={{ maxWidth: "200vh", minHeight: "100vh", width: "100vw" }}
       >
         {activeView === "shoppingList" && (
           <ShoppingList onFavoritesClick={handleFavoritesClick} />
