@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { addItem } from "../../redux/shoppingListSlice";
 import AddItemBar from "../AddItemBar/AddItemBar";
-import FilterIconSearchToggle from "../FilterIconSearchToggle/FilterIconSearchToggle";
 import favoriteIcon from "../../assets/images/heart.png";
 import openEyeIcon from "../../assets/images/eye.png";
 import closedEyeIcon from "../../assets/images/closedEye.png";
@@ -39,7 +38,6 @@ export default function Toolbar({
           />
         }
       </button>
-      <FilterIconSearchToggle onSearch={onSearch} />
     </div>
   );
 }

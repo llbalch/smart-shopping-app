@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import ShoppingList from "./components/ShoppingList/ShoppingList";
 import {
-  setActiveView,
+
   openEditItemModal,
   closeEditItemModal,
   openEditCategoryModal,

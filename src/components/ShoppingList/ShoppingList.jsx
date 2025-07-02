@@ -63,7 +63,7 @@ export default function ShoppingList({ onFavoritesClick }) {
     <>
       
       <div>
-        <h2 style={{ textAlign: "center" }}>🍎 SmartCart</h2>
+        <h2 style={{ textAlign: "center" }}>🛒 SmartCart</h2>
         <Toolbar
           onFavoritesClick={onFavoritesClick}
           onAddItem={handleAddItem}
