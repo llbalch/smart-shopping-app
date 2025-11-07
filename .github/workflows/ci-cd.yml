@@ -1,4 +1,4 @@
-name:CI/CD
+name: CI/CD
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-changes:
+  changes:
     runs-on: ubuntu-latest
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
@@ -42,6 +42,7 @@ changes:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: 'maven'  # Enable Maven cache
       - name: Build Backend
         run: ./mvnw clean install
       - name: Run Backend Tests
@@ -61,6 +62,7 @@ changes:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+          cache: 'npm'  # Enable npm cache
       - name: Install dependencies
         run: npm ci
       - name: Build Frontend
