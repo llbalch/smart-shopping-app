@@ -32,22 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: changes
     if: needs.changes.outputs.backend == 'true'
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: smart_shopping_app
-          MYSQL_USER: test
-          MYSQL_PASSWORD: test
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h localhost"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-    
     steps:
       - uses: actions/checkout@v4
       
@@ -76,9 +60,7 @@ jobs:
       
       - name: Run Backend Tests
         working-directory: ./smart-shopping-app-backend
-        run: ./mvnw test -Dspring.profiles.active=test
-        env:
-          SPRING_PROFILES_ACTIVE: test
+        run: ./mvnw test
 
   frontend:
     runs-on: ubuntu-latest
