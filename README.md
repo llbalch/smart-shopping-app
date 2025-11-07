@@ -14,7 +14,7 @@ This project focuses on showcasing skills in these particular technical stacks:
 ## Prerequisites
 
 - Node.js (v16+ recommended)
-- npm or yarn
+- npm
 
 
 ## After forking and cloning the repository, run the following in terminal:
