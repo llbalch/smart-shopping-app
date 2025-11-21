@@ -30,6 +30,11 @@ npm run dev
 ```
  Open browser to http://localhost:5173
 
+## API Endpoints
+POST /api/shopping-lists
+PUT /api/shopping-lists
+DELETE /api/shopping-lists
+
 ## Deployment Link
 
 https://smart-shopping-app.onrender.com
