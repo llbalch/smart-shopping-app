@@ -1,4 +1,4 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid, createAsyncThunk } from "@reduxjs/toolkit";
 const initialState = {
   items: [
     {
@@ -38,6 +38,8 @@ const initialState = {
       favorite: false,
     },
   ],
+    loading: false,
+    error: null,
 };
 
 const shoppingListSlice = createSlice({
@@ -96,6 +98,34 @@ const shoppingListSlice = createSlice({
       return initialState;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchShoppingLists.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchShoppingLists.fulfilled, (state, action) => {
+        state.loading = false;
+        const lists = action.payload || [];
+        if (lists.length > 0) {
+          // map backend structure to frontend items
+          const items = lists[0].items || [];
+          state.items = items.map((it) => ({
+            id: it.id ? String(it.id) : nanoid(),
+            name: it.name || "",
+            category: it.category ? it.category.name : "",
+            quantity: it.quantity || 1,
+            completed: false,
+            note: "",
+            favorite: it.favorited || false,
+          }));
+        }
+      })
+      .addCase(fetchShoppingLists.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
+  },
 });
 
 export const {
@@ -107,3 +137,9 @@ export const {
   resetList,
 } = shoppingListSlice.actions;
 export default shoppingListSlice.reducer;
+
+export const fetchShoppingLists = createAsyncThunk("shoppingList/fetch", async () => {
+  const res = await fetch("http://localhost:8080/api/shopping-lists");
+  if (!res.ok) throw new Error("Failed to fetch shopping lists");
+  return res.json();
+});
