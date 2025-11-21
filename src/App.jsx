@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 import ShoppingList from "./components/ShoppingList/ShoppingList";
 import {
 
@@ -13,8 +14,7 @@ import EditItemDetails from "../src/components/EditItemDetails/EditItemDetails";
 import EditCategoryDetails from "../src/components/EditCategoryDetails/EditCategoryDetails";
 import FavoritedItems from "../src/components/FavoritedItems/FavoritedItems";
 import Modal from "../src/components/Modal/Modal";
-import { editItem } from "./redux/shoppingListSlice";
-import { selectFavoriteItems } from "./redux/favoritesSlice";
+import { editItem, fetchShoppingLists } from "./redux/shoppingListSlice";
 
 function App() {
   const {
@@ -25,6 +25,11 @@ function App() {
     editingItemId,
   } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
+
+  // Fetch shopping lists from backend on mount (thunk logic)
+  useEffect(() => {
+    dispatch(fetchShoppingLists());
+  }, [dispatch]);
 
   // find the actual item object in Redux store to get its category prop
   const editingItem = useSelector((state) =>
@@ -47,39 +52,12 @@ function App() {
     dispatch(openFavoritesModal());
   };
 
-  const handleEditItem = () => {
-    dispatch(closeEditItemModal());
-    dispatch(openEditItemModal(editingItemId));
-  };
-
-  const handleAddFavorite = () => {
-    const trimmed = newItemName.trim();
-    if (!trimmed) return;
-    const category = suggestCategory(trimmed);
-
-    onAddItem({
-      id: Date.now(),
-      name: trimmed,
-      category,
-      quantity: 1,
-      note: "",
-      favorite: false,
-    });
-    setNewItemName("");
-    setIsAdding(false);
-  };
-
-  const favoriteItems = useSelector(selectFavoriteItems);
 
   return (
     <>
       {isFavoritesModalOpen && (
         <Modal onClose={() => dispatch(closeFavoritesModal())}>
-       <FavoritedItems
-            onEditItem={handleEditItem}
-            onAddFavorite={handleAddFavorite}
-            onBack={() => dispatch(closeFavoritesModal())}
-          />
+       <FavoritedItems onBack={() => dispatch(closeFavoritesModal())} />
         </Modal>
       )}
       {isEditItemModalOpen && (
