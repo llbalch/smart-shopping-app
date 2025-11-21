@@ -31,42 +31,129 @@ jobs:
   backend:
     runs-on: ubuntu-latest
     needs: changes
-    defaults:
-      run:
-        working-directory: smart-shopping-app-backend
-    if: needs.changes.outputs.backend == 'true'
+    env:
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: rootpassword
+          MYSQL_DATABASE: smart_shopping_db
+          MYSQL_USER: app_user
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+   
     steps:
       - uses: actions/checkout@v4
+      
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'maven'  # Enable Maven cache
-      - name: Build Backend
-        run: ./mvnw clean install
-      - name: Run Backend Tests
-        run: ./mvnw test
-      # (In progress) Deploy backend here
+          cache: 'maven'
+      
+      - name: Make wrapper executable
+        run: chmod +x ./smart-shopping-app-backend/mvnw
+
+      - name: Wait for MySQL to be ready
+        run: |
+          # wait until the service is healthy
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -uroot -proot --silent; then
+              echo "MySQL is ready"
+              break
+            fi
+            echo "Waiting for MySQL to be ready..."
+            sleep 2
+          done
+
+      - name: Build Backend with Coverage
+        working-directory: ./smart-shopping-app-backend
+        run: |
+          pwd
+          ./mvnw clean install
+      
+      - name: Run Backend Tests with Code Coverage
+        working-directory: ./smart-shopping-app-backend
+        run: ./mvnw test jacoco:report
 
   frontend:
     runs-on: ubuntu-latest
     needs: changes
-    defaults:
-      run:
-        working-directory: .
     if: needs.changes.outputs.frontend == 'true'
     steps:
       - uses: actions/checkout@v4
+      
       - name: Use Node.js 20
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'npm'  # Enable npm cache
+          cache: 'npm'
+      
       - name: Install dependencies
         run: npm ci
+      
       - name: Build Frontend
         run: npm run build
-      - name: Run Frontend Tests
-        run: npm test
-      # (In progress) Deploy frontend here
+      
+      - name: Run Frontend Tests with Coverage
+        run: npm test -- --coverage --watchAll=false
+
+  code-analysis:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    if: always()
+    name: SonarQube Code Analysis
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Make backend wrapper executable
+        run: chmod +x ./smart-shopping-app-backend/mvnw
+
+      - name: Generate Frontend Coverage Report
+        run: |
+          npm ci
+          npm test -- --coverage --watchAll=false
+
+      - name: Generate Backend Coverage Report
+        working-directory: ./smart-shopping-app-backend
+        run: ./mvnw clean install -DskipTests && ./mvnw jacoco:report
+
+      - name: Run SonarScanner Analysis
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=smart-shopping-app
+            -Dsonar.organization=llbalch
+            -Dsonar.sources=src,smart-shopping-app-backend/src/main
+            -Dsonar.exclusions=**/node_modules/**,**/target/**,**/*.test.js,**/*.test.jsx,**/dist/**
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.java.binaries=smart-shopping-app-backend/target/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=smart-shopping-app-backend/target/site/jacoco/jacoco.xml
+            -Dsonar.java.junit.reportPaths=smart-shopping-app-backend/target/surefire-reports
