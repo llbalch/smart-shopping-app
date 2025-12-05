@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.0</version> || <version>3.5.7</version> (FIX THIS TO THE CORRECT VERSION)
+		<version>3.2.0</version>
 		<relativePath/>
 	</parent>
 	<groupId>com.lauren.smartshoppingapp</groupId>
@@ -14,7 +14,7 @@
 	<name>smart-shopping-app</name>
 	<description>Smart Shopping App Backend</description>
 	<properties>
-		<java.version>21</java.version> || <java.version>17</java.version> (FIX THIS TO THE CORRECT VERSION)
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
