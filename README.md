@@ -9,12 +9,18 @@ This project focuses on showcasing skills in these particular technical stacks:
 - React Hooks
 - Bootstrap CSS & Custom CSS
 
+Most recent Integrations - SonarScanner + SonarQube Cloud
+FrontEnd - React 19 with Jest coverage
+Backend - Spring Boot 3.5.7 with JaCoCo coverage
+CI/CD - Github Actions
+Coverage formats - LCOV and XML
+
 # Installation
 
 ## Prerequisites
 
 - Node.js (v16+ recommended)
-- npm or yarn
+- npm
 
 
 ## After forking and cloning the repository, run the following in terminal:
@@ -23,6 +29,11 @@ npm install
 npm run dev
 ```
  Open browser to http://localhost:5173
+
+## API Endpoints
+POST /api/shopping-lists
+PUT /api/shopping-lists
+DELETE /api/shopping-lists
 
 ## Deployment Link
 
