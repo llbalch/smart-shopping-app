@@ -1,4 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 import ShoppingList from "./components/ShoppingList/ShoppingList";
 import {
 
@@ -13,7 +14,7 @@ import EditItemDetails from "../src/components/EditItemDetails/EditItemDetails";
 import EditCategoryDetails from "../src/components/EditCategoryDetails/EditCategoryDetails";
 import FavoritedItems from "../src/components/FavoritedItems/FavoritedItems";
 import Modal from "../src/components/Modal/Modal";
-import { editItem } from "./redux/shoppingListSlice";
+import { editItemAsync, loadItems } from "./redux/shoppingListSlice";
 import { selectFavoriteItems } from "./redux/favoritesSlice";
 
 function App() {
@@ -26,6 +27,10 @@ function App() {
   } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(loadItems());
+  }, [dispatch]);
+
   // find the actual item object in Redux store to get its category prop
   const editingItem = useSelector((state) =>
     state.shoppingList.items.find((item) => item.id === editingItemId)
@@ -34,9 +39,9 @@ function App() {
 
   const handleCategorySave = (newCategory) => {
     dispatch(
-      editItem({
+      editItemAsync({
         id: editingItemId,
-        category: newCategory,
+        updates: { category: newCategory },
       })
     );
     dispatch(closeEditCategoryModal());

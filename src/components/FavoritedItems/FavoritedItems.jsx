@@ -1,5 +1,4 @@
 import React from "react";
-import { nanoid } from "@reduxjs/toolkit";
 import { useSelector, useDispatch } from "react-redux";
 
 import AddItemBar from "../AddItemBar/AddItemBar";
@@ -9,7 +8,7 @@ import {
   selectFavoriteSuggestions,
   removeFavorite
 } from "../../redux/favoritesSlice";
-import { addItem } from "../../redux/shoppingListSlice";
+import { addItemAsync } from "../../redux/shoppingListSlice";
 import { suggestCategory } from "../../utilities/suggestCategory";
 import { openEditItemModal, closeFavoritesModal } from "../../redux/uiSlice";
 import "../Modal/Modal.css";
@@ -34,13 +33,13 @@ export default function FavoritedItems() {
   const handleAddFavoriteToShoppingList = (item) => {
     const category = suggestCategory(item.name);
     dispatch(
-      addItem({
-        ...item,
-        id: nanoid(),
+      addItemAsync({
+        name: item.name,
         category,
         completed: false,
         quantity: 1,
         note: "",
+        favorite: item.favorite || false,
       })
     );
   };

@@ -1,5 +1,4 @@
 import { useSelector, useDispatch } from "react-redux";
-import { addItem } from "../../redux/shoppingListSlice";
 import AddItemBar from "../AddItemBar/AddItemBar";
 import favoriteIcon from "../../assets/images/heart.png";
 import openEyeIcon from "../../assets/images/eye.png";

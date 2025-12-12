@@ -4,9 +4,9 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  editItem,
-  removeItem,
-  toggleFavorite,
+  editItemAsync,
+  removeItemAsync,
+  toggleFavoriteAsync,
 } from "../../redux/shoppingListSlice";
 import { closeEditItemModal, openEditCategoryModal } from "../../redux/uiSlice";
 import { addFavoriteByName, removeFavorite } from "../../redux/favoritesSlice";
@@ -34,11 +34,9 @@ export default function EditItemDetails({ itemId, onClose }) {
 
   const handleSave = () => {
     dispatch(
-      editItem({
+      editItemAsync({
         id: itemId,
-        note,
-        quantity,
-        category: itemCategory,
+        updates: { note, quantity, category: itemCategory },
       })
     );
     if (onClose) onClose();
@@ -46,13 +44,13 @@ export default function EditItemDetails({ itemId, onClose }) {
   };
 
   const handleDelete = () => {
-    dispatch(removeItem(itemId));
+    dispatch(removeItemAsync(itemId));
     if (onClose) onClose();
     else dispatch(closeEditItemModal());
   };
 
   const handleToggleFavorite = (itemId) => {
-    dispatch(toggleFavorite(itemId));
+    dispatch(toggleFavoriteAsync(itemId));
     const item = items.find((item) => item.id === itemId);
     if (item && !item.favorite) {
       dispatch(addFavoriteByName(item.name));

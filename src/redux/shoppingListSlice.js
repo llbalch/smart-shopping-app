@@ -1,109 +1,88 @@
-import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { getItems, createItem, updateItem as apiUpdateItem, removeItem as apiRemoveItem, toggleFavorite as apiToggleFavorite, toggleComplete as apiToggleComplete } from "../utilities/apiClient";
 const initialState = {
-  items: [
-    {
-      id: "1",
-      name: "Carrots",
-      category: "Produce",
-      quantity: 1,
-      completed: false,
-      note: "",
-      favorite: false,
-    },
-    {
-      id: "2",
-      name: "Onions",
-      category: "Produce",
-      quantity: 2,
-      completed: false,
-      note: "",
-      favorite: false,
-    },
-    {
-      id: "3",
-      name: "Ground Beef",
-      category: "Meat",
-      quantity: 1,
-      completed: false,
-      note: "",
-      favorite: false,
-    },
-    {
-      id: "4",
-      name: "Milk",
-      category: "Dairy",
-      quantity: 1,
-      completed: true,
-      note: "",
-      favorite: false,
-    },
-  ],
+  items: [],
+  status: "idle",
+  error: null,
 };
+
+export const loadItems = createAsyncThunk("shoppingList/loadItems", async () => {
+  const data = await getItems();
+  return data;
+});
+
+export const addItemAsync = createAsyncThunk("shoppingList/addItem", async (item) => {
+  const created = await createItem(item);
+  return created;
+});
+
+export const editItemAsync = createAsyncThunk("shoppingList/editItem", async ({ id, updates }) => {
+  const updated = await apiUpdateItem(id, updates);
+  return updated;
+});
+
+export const removeItemAsync = createAsyncThunk("shoppingList/removeItem", async (id) => {
+  await apiRemoveItem(id);
+  return id;
+});
+
+export const toggleFavoriteAsync = createAsyncThunk("shoppingList/toggleFavorite", async (id) => {
+  const updated = await apiToggleFavorite(id);
+  return updated;
+});
+
+export const toggleCompleteAsync = createAsyncThunk("shoppingList/toggleComplete", async (id) => {
+  const updated = await apiToggleComplete(id);
+  return updated;
+});
 
 const shoppingListSlice = createSlice({
   name: "shoppingList",
   initialState: initialState,
   reducers: {
-    addItem: {
-      reducer: (state, action) => {
-        /* add item logic*/
-        state.items.push(action.payload);
-      },
-      prepare({ name, category = "", quantity = 1, note = "", favorite }) {
-        return {
-          payload: {
-            id: nanoid(),
-            name,
-            category,
-            quantity,
-            completed: false,
-            note,
-            favorite: false,
-          },
-        };
-      },
-    },
-    removeItem: (state, action) => {
-      /* remove item logic*/
-      state.items = state.items.filter((item) => item.id !== action.payload);
-    },
-    toggleComplete: (state, action) => {
-      /* logic to toggle completed*/
-      const item = state.items.find((item) => item.id === action.payload);
-      if (item) {
-        item.completed = !item.completed;
-      }
-    },
-    editItem: (state, action) => {
-      /* edit item logic*/
-      const { id, ...updates } = action.payload;
-      const item = state.items.find((item) => item.id === id);
-      if (item) {
-        Object.entries(updates).forEach(([key, value]) => {
-          if (value !== undefined) {
-            item[key] = value;
-          }
-        });
-      }
-    },
-    toggleFavorite: (state, action) => {
-      const item = state.items.find((item) => item.id === action.payload);
-      if (item) {
-        item.favorite = !item.favorite;
-      }
-    },
+    // keep reset only; mutations now occur via async thunks
     resetList() {
-      return initialState;
+      return { ...initialState, items: [] };
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loadItems.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(loadItems.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.items = action.payload;
+      })
+      .addCase(loadItems.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(addItemAsync.fulfilled, (state, action) => {
+        state.items.push(action.payload);
+      })
+      .addCase(editItemAsync.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const idx = state.items.findIndex((i) => i.id === updated.id);
+        if (idx !== -1) state.items[idx] = updated;
+      })
+      .addCase(removeItemAsync.fulfilled, (state, action) => {
+        const id = action.payload;
+        state.items = state.items.filter((i) => i.id !== id);
+      })
+      .addCase(toggleFavoriteAsync.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const idx = state.items.findIndex((i) => i.id === updated.id);
+        if (idx !== -1) state.items[idx] = updated;
+      })
+      .addCase(toggleCompleteAsync.fulfilled, (state, action) => {
+        const updated = action.payload;
+        const idx = state.items.findIndex((i) => i.id === updated.id);
+        if (idx !== -1) state.items[idx] = updated;
+      });
   },
 });
 
-export const {
-  addItem,
-  removeItem,
-  toggleComplete,
-  editItem,
-  toggleFavorite,
-  resetList,
-} = shoppingListSlice.actions;
+export const { resetList } = shoppingListSlice.actions;
 export default shoppingListSlice.reducer;
