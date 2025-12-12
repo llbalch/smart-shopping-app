@@ -9,10 +9,13 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
     private final ShoppingListRepository shoppingListRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ItemService(ItemRepository itemRepository, ShoppingListRepository shoppingListRepository) {
+    public ItemService(ItemRepository itemRepository, ShoppingListRepository shoppingListRepository,
+            CategoryRepository categoryRepository) {
         this.itemRepository = itemRepository;
         this.shoppingListRepository = shoppingListRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     // Helper method to get or create the single shopping list
@@ -26,10 +29,28 @@ public class ItemService {
         return lists.get(0);
     }
 
+    // Helper method to find or create a category by name
+    private Category findOrCreateCategory(String categoryName) {
+        if (categoryName == null || categoryName.trim().isEmpty()) {
+            return null;
+        }
+        return categoryRepository.findByName(categoryName)
+                .orElseGet(() -> {
+                    Category newCategory = new Category();
+                    newCategory.setName(categoryName);
+                    newCategory.setColor("#cccccc"); // default color
+                    return categoryRepository.save(newCategory);
+                });
+    }
+
     // CREATE: Add a new item to the shopping list
     public Item addItem(Item item) {
         ShoppingList shoppingList = getOrCreateShoppingList();
         validateItem(item);
+        if (item.getCategory() != null && item.getCategory().getName() != null) {
+            Category category = findOrCreateCategory(item.getCategory().getName());
+            item.setCategory(category);
+        }
         item.setShoppingList(shoppingList);
         return itemRepository.save(item);
     }
@@ -55,7 +76,10 @@ public class ItemService {
         existingItem.setName(updatedItem.getName());
         existingItem.setQuantity(updatedItem.getQuantity());
         existingItem.setFavorited(updatedItem.isFavorited());
-        existingItem.setCategory(updatedItem.getCategory());
+        if (updatedItem.getCategory() != null && updatedItem.getCategory().getName() != null) {
+            Category category = findOrCreateCategory(updatedItem.getCategory().getName());
+            existingItem.setCategory(category);
+        }
 
         return itemRepository.save(existingItem);
     }

@@ -3,10 +3,14 @@ module.exports = {
     transform: {
         "^.+\\.[jt]sx?$": "babel-jest",
     },
+    transformIgnorePatterns: [
+        "node_modules/(?!(@testing-library|@reduxjs)/)"
+    ],
     moduleNameMapper: {
         '\\.(jpg|jpeg|png|gif|svg)$' : '<rootDir>/__mocks__/fileMock.js',
         "\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/styleMock.js"
     },
+   setupFiles: ["<rootDir>/jest.setup.js"],
    setupFilesAfterEnv: ["<rootDir>/setupTests.js"],
    collectCoverageFrom: [
        "src/**/*.{js,jsx}",

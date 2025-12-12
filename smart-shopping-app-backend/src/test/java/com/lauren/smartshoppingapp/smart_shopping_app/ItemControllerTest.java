@@ -177,7 +177,7 @@ class ItemControllerTest {
     @Test
     void getItem_NotFound() throws Exception {
         when(itemService.getItemById(999L))
-                .thenThrow(new RuntimeException("Item not found with id: 999"));
+                .thenThrow(new java.util.NoSuchElementException("Item not found with id: 999"));
 
         mockMvc.perform(get("/api/items/999"))
                 .andExpect(status().isNotFound());
