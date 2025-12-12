@@ -180,7 +180,7 @@ class ItemControllerTest {
                 .thenThrow(new RuntimeException("Item not found with id: 999"));
 
         mockMvc.perform(get("/api/items/999"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isNotFound());
 
         verify(itemService, times(1)).getItemById(999L);
     }

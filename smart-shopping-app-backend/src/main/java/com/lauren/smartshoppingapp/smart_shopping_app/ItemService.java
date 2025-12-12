@@ -42,13 +42,13 @@ public class ItemService {
     // READ: Get a specific item
     public Item getItemById(Long itemId) {
         return itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
+                .orElseThrow(() -> new NoSuchElementException("Item not found with id: " + itemId));
     }
 
     // UPDATE: Update an existing item
     public Item updateItem(Long itemId, Item updatedItem) {
         Item existingItem = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
+                .orElseThrow(() -> new NoSuchElementException("Item not found with id: " + itemId));
 
         validateItem(updatedItem);
         existingItem.setName(updatedItem.getName());
@@ -62,7 +62,7 @@ public class ItemService {
     // UPDATE: Toggle favorite status
     public Item toggleFavorite(Long itemId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
+                .orElseThrow(() -> new NoSuchElementException("Item not found with id: " + itemId));
 
         item.setFavorited(!item.isFavorited());
         return itemRepository.save(item);
@@ -71,7 +71,7 @@ public class ItemService {
     // DELETE: Remove an item from the shopping list
     public void deleteItem(Long itemId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found with id: " + itemId));
+                .orElseThrow(() -> new NoSuchElementException("Item not found with id: " + itemId));
         itemRepository.delete(item);
     }
 
