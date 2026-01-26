@@ -93,6 +93,15 @@ public class ItemService {
         return itemRepository.save(item);
     }
 
+    // UPDATE: Toggle completed status
+    public Item toggleComplete(Long itemId) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NoSuchElementException("Item not found with id: " + itemId));
+
+        item.setCompleted(!item.isCompleted());
+        return itemRepository.save(item);
+    }
+
     // DELETE: Remove an item from the shopping list
     public void deleteItem(Long itemId) {
         Item item = itemRepository.findById(itemId)

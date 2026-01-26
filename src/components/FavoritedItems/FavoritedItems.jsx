@@ -9,7 +9,7 @@ import {
   removeFavorite
 } from "../../redux/favoritesSlice";
 import { addItemAsync } from "../../redux/shoppingListSlice";
-import { suggestCategory } from "../../utilities/suggestCategory";
+import { suggestCategory } from "../../utilities/suggestCategory.js";
 import { openEditItemModal, closeFavoritesModal } from "../../redux/uiSlice";
 import "../Modal/Modal.css";
 import { ItemList } from "../ItemList/ItemList";
@@ -20,8 +20,6 @@ export default function FavoritedItems() {
   // Get redux data directly
   const items = useSelector(selectFavoriteItems);
   const suggestions = useSelector(selectFavoriteSuggestions);
-  console.log("FavoritedItems items:", items);
-  console.log("FavoritedItems suggestions:", suggestions);
 
   const favorites = useSelector(selectFavoriteItems);
 

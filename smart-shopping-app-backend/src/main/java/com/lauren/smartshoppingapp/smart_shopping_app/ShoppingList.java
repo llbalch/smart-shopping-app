@@ -1,6 +1,6 @@
 package com.lauren.smartshoppingapp.smart_shopping_app;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class ShoppingList {
 
     // added bi-directional relationship
     @OneToMany(mappedBy = "shoppingList", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference(value = "shoppinglist-items")
+    @JsonIgnoreProperties({ "shoppingList", "category" })
     private List<Item> items;
 
     // Getters and setters

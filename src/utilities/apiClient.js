@@ -1,9 +1,25 @@
 import { API_BASE } from "../constants/api";
 
+// Transform backend response to frontend format
+function transformItem(item) {
+  if (!item) return item;
+  return {
+    ...item,
+    favorite: item.favorited,
+    category: item.category?.name || item.category || "",
+  };
+}
+
+function transformItems(items) {
+  return Array.isArray(items) ? items.map(transformItem) : [];
+}
+
 export async function getItems() {
   const res = await fetch(`${API_BASE}/api/items`);
   if (!res.ok) throw new Error(`Failed to load items: ${res.status}`);
-  return res.json();
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : [];
+  return transformItems(data);
 }
 
 export async function createItem(body) {
@@ -11,6 +27,7 @@ export async function createItem(body) {
     name: body.name,
     quantity: body.quantity ?? 1,
     favorited: !!body.favorite,
+    completed: !!body.completed,
     category: body.category ? { name: body.category } : null,
   };
   const res = await fetch(`${API_BASE}/api/items`, {
@@ -19,7 +36,8 @@ export async function createItem(body) {
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(`Failed to create item: ${res.status}`);
-  return res.json();
+  const data = await res.json();
+  return transformItem(data);
 }
 
 export async function updateItem(id, body) {
@@ -27,6 +45,7 @@ export async function updateItem(id, body) {
     name: body.name,
     quantity: body.quantity,
     favorited: body.favorite,
+    completed: body.completed,
     category: body.category ? { name: body.category } : undefined,
   };
   const res = await fetch(`${API_BASE}/api/items/${id}`, {
@@ -35,7 +54,8 @@ export async function updateItem(id, body) {
     body: JSON.stringify(payload),
   });
   if (!res.ok) throw new Error(`Failed to update item: ${res.status}`);
-  return res.json();
+  const data = await res.json();
+  return transformItem(data);
 }
 
 export async function removeItem(id) {
@@ -46,11 +66,13 @@ export async function removeItem(id) {
 export async function toggleFavorite(id) {
   const res = await fetch(`${API_BASE}/api/items/${id}/favorite`, { method: "PATCH" });
   if (!res.ok) throw new Error(`Failed to toggle favorite: ${res.status}`);
-  return res.json();
+  const data = await res.json();
+  return transformItem(data);
 }
 
 export async function toggleComplete(id) {
   const res = await fetch(`${API_BASE}/api/items/${id}/complete`, { method: "PATCH" });
   if (!res.ok) throw new Error(`Failed to toggle complete: ${res.status}`);
-  return res.json();
+  const data = await res.json();
+  return transformItem(data);
 }

@@ -1,6 +1,6 @@
 package com.lauren.smartshoppingapp.smart_shopping_app;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,16 +11,17 @@ public class Item {
 
     private String name;
     private boolean favorited;
+    private boolean completed;
     private int quantity;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonBackReference(value = "category-items")
+    @JsonIgnoreProperties({ "items" })
     private Category category;
 
     @ManyToOne
     @JoinColumn(name = "shopping_list_id")
-    @JsonBackReference(value = "shoppinglist-items")
+    @JsonIgnoreProperties({ "items" })
     private ShoppingList shoppingList;
 
     // Getters and setters
@@ -46,6 +47,14 @@ public class Item {
 
     public void setFavorited(boolean favorited) {
         this.favorited = favorited;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 
     public int getQuantity() {

@@ -1,6 +1,6 @@
 package com.lauren.smartshoppingapp.smart_shopping_app;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class Category {
     private String color;
 
     @OneToMany(mappedBy = "category")
-    @JsonManagedReference(value = "category-items")
+    @JsonIgnoreProperties({ "category", "shoppingList" })
     private List<Item> items;
 
     // Getters and setters

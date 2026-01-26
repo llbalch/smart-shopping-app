@@ -57,23 +57,6 @@ function App() {
     dispatch(openEditItemModal(editingItemId));
   };
 
-  const handleAddFavorite = () => {
-    const trimmed = newItemName.trim();
-    if (!trimmed) return;
-    const category = suggestCategory(trimmed);
-
-    onAddItem({
-      id: Date.now(),
-      name: trimmed,
-      category,
-      quantity: 1,
-      note: "",
-      favorite: false,
-    });
-    setNewItemName("");
-    setIsAdding(false);
-  };
-
   const favoriteItems = useSelector(selectFavoriteItems);
 
   return (
@@ -82,7 +65,6 @@ function App() {
         <Modal onClose={() => dispatch(closeFavoritesModal())}>
        <FavoritedItems
             onEditItem={handleEditItem}
-            onAddFavorite={handleAddFavorite}
             onBack={() => dispatch(closeFavoritesModal())}
           />
         </Modal>

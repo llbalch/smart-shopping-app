@@ -12,7 +12,7 @@ import {
   setActiveView,
   openFavoritesModal,
 } from "../../redux/uiSlice.js";
-import { suggestCategory } from "../../utilities/suggestCategory";
+import { suggestCategory } from "../../utilities/suggestCategory.js";
 // import { showFavorites, handleSearch, handleToggleCompleted, ... }
 
 export default function ShoppingList({ onFavoritesClick }) {

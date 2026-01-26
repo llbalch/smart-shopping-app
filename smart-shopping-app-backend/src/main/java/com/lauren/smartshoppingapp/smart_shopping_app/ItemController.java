@@ -6,7 +6,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/items")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${app.cors.allowed-origins}")
 public class ItemController {
 
     private final ItemService itemService;
@@ -39,6 +39,11 @@ public class ItemController {
     @PatchMapping("/{itemId}/favorite")
     public Item toggleFavorite(@PathVariable Long itemId) {
         return itemService.toggleFavorite(itemId);
+    }
+
+    @PatchMapping("/{itemId}/complete")
+    public Item toggleComplete(@PathVariable Long itemId) {
+        return itemService.toggleComplete(itemId);
     }
 
     @DeleteMapping("/{itemId}")

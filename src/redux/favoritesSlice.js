@@ -1,4 +1,3 @@
-import { STATEMENT_TYPES } from "@babel/types";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {

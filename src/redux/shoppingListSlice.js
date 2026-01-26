@@ -62,24 +62,39 @@ const shoppingListSlice = createSlice({
       .addCase(addItemAsync.fulfilled, (state, action) => {
         state.items.push(action.payload);
       })
+      .addCase(addItemAsync.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
       .addCase(editItemAsync.fulfilled, (state, action) => {
         const updated = action.payload;
         const idx = state.items.findIndex((i) => i.id === updated.id);
         if (idx !== -1) state.items[idx] = updated;
       })
+      .addCase(editItemAsync.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
       .addCase(removeItemAsync.fulfilled, (state, action) => {
         const id = action.payload;
         state.items = state.items.filter((i) => i.id !== id);
+      })
+      .addCase(removeItemAsync.rejected, (state, action) => {
+        state.error = action.error.message;
       })
       .addCase(toggleFavoriteAsync.fulfilled, (state, action) => {
         const updated = action.payload;
         const idx = state.items.findIndex((i) => i.id === updated.id);
         if (idx !== -1) state.items[idx] = updated;
       })
+      .addCase(toggleFavoriteAsync.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
       .addCase(toggleCompleteAsync.fulfilled, (state, action) => {
         const updated = action.payload;
         const idx = state.items.findIndex((i) => i.id === updated.id);
         if (idx !== -1) state.items[idx] = updated;
+      })
+      .addCase(toggleCompleteAsync.rejected, (state, action) => {
+        state.error = action.error.message;
       });
   },
 });

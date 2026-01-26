@@ -5,7 +5,7 @@ import editIcon from "../../assets/images/pencil.png";
 import { DEFAULT_CATEGORIES } from "../../constants/categories";
 import { CATEGORY_COLORS } from "../../constants/categoryColors";
 import "../Modal/Modal.css";
-import { suggestCategory } from "../../utilities/suggestCategory";
+import { suggestCategory } from "../../utilities/suggestCategory.js";
 import trashIcon from "../../assets/images/trash.png";
 // appending User-made custom categories to default categories
 export function ItemList({

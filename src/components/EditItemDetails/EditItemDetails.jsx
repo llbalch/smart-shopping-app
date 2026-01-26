@@ -19,7 +19,6 @@ export default function EditItemDetails({ itemId, onClose }) {
   const item = useSelector((state) =>
     state.shoppingList.items.find((i) => i.id === itemId)
   );
-  console.log("EditItemDetails item:", item);
   const items = useSelector((state) => state.shoppingList.items);
 
   // Local state for editable fields (notes/quantity/category)
